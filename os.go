@@ -104,7 +104,14 @@ var osLibrary = []RegistryFunction{
 		os.Exit(status)
 		panic("unreachable")
 	}},
-	{"getenv", func(l *State) int { l.PushString(os.Getenv(CheckString(l, 1))); return 1 }},
+	{"getenv", func(l *State) int {
+		s, ok := os.LookupEnv(CheckString(l, 1))
+		if !ok {
+			return 0
+		}
+		l.PushString(s)
+		return 1
+	}},
 	{"remove", func(l *State) int { name := CheckString(l, 1); return FileResult(l, os.Remove(name), name) }},
 	{"rename", func(l *State) int { return FileResult(l, os.Rename(CheckString(l, 1), CheckString(l, 2)), "") }},
 	// {"setlocale", func(l *State) int {
